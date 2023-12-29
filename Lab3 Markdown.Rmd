@@ -1,0 +1,79 @@
+---
+title: "Lab3"
+author: "Denys Kushnirenko"
+date: "2023-11-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## 1. For two to four sets of interrelated data, construct a scatter plot, and determine the functional type of dependence from the graphs.
+
+```{r, echo=FALSE}
+happyscore_income <- read.csv(".\\happyscore_income.csv")
+library(ggplot2)
+library(car)
+```
+```{r}
+plot(happyScore ~ GDP, data = happyscore_income, pch = 20, main = "The dependence of happiness level on the country's GDP")
+plot(happyScore ~ avg_satisfaction, data = happyscore_income, pch = 20, main = "The dependence of happiness level on the level of satisfaction with income")
+
+```
+
+##  2. Construct the corresponding regression model.
+
+```{r}
+model1 <- lm(happyScore ~ GDP+avg_satisfaction, data = happyscore_income)
+summary(model1)
+```
+
+## 3. Plot the obtained regression line on the same graph as the scatter plot.
+
+```{r}
+ggplot(data = happyscore_income) +
+  geom_point(mapping = aes(x = GDP, y = happyScore, size = avg_satisfaction)) +
+  geom_smooth(mapping = aes(x = GDP, y = happyScore), color = "red",
+              method = "lm", formula = y ~ x, se = TRUE)
+ggplot(data = happyscore_income) +
+  geom_point(mapping = aes(x = avg_satisfaction, y = happyScore)) +
+  geom_smooth(mapping = aes(x = avg_satisfaction, y = happyScore), color = "red",
+              method = "lm", formula = y ~ x, se = TRUE)
+```
+
+## 4. Construct a response-prediction plot.
+
+```{r}
+plot(happyscore_income$happyScore ~ fitted(model1), xlab = "Prediction", ylab = "Response")
+abline(0, 1)
+```
+
+## 5. Construct a response-residual plot.
+
+```{r}
+plot(resid(model1) ~ happyscore_income$happyScore, xlab = "Response", ylab = "Residuals")
+abline(h=0)
+```
+
+## 6. Construct a residual plot by the number of observation.
+
+```{r}
+plot(c(1:length(happyscore_income$happyScore)), resid(model1), xlab = "Number of observation", ylab = "Residuals")
+abline(h = 0)
+```
+
+## 7. Construct a Q-Q plot for the residuals.
+
+```{r}
+qqPlot(resid(model1))
+```
+
+
+
+
+
+
+
+
+
+
